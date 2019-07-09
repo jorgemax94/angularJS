@@ -35,7 +35,7 @@
       angular.module("listaTelefonica", ["ngMessages"]);
       angular
         .module("listaTelefonica")
-        .controller("listaTelefonicaCtrl", function($scope, $filter) {
+        .controller("listaTelefonicaCtrl", function($scope, $filter, $http) {
           $scope.app = "Lista Telefonica";
           $scope.contatos = [
             {
@@ -91,8 +91,11 @@
           ];
           $scope.adicionarContato = function(contato) {
             $scope.contatos.push(angular.copy(contato));
+            //simulação de utilização de backend com ajax. utilizando post
+            //$http.post("http://localhost/contatos", contato).success().error() segundo parametro para dados;
             delete $scope.contato;
             $scope.contatoForm.$setPristine();
+            //$scope.contatos.push(data); atualização de modelo ou chamar carregarContatos novamente(GET)
           };
           $scope.apagarContatos = function(contatos) {
             $scope.contatos = contatos.filter(function(contato) {
@@ -107,6 +110,17 @@
           $scope.ordenarPor = function(campo){
             $scope.criterioDeOrdenacao = campo;
             $scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
+          }
+
+          //método para carregamento de contatos via serviço.
+          //necessário chamar em algum local do script
+          var carregarContatos = function(){
+            //injeção de dependência HTTP, utilizando GET
+
+            $http.get("http://localhost").success(function(data, status){
+              //console.log("Requisição OK");
+              $scope.contatos = data;
+            }).error();
           }
 
         });
